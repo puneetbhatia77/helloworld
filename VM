@@ -1,0 +1,105 @@
+install Oracle Virtualbox
+install vagrant
+
+
+Open Oracle virtualbox -> files -> preferences -> general -> Default machine folder : E:\VM
+
+\vagrant\images
+
+
+
+From vagrantcloud website,  get bento ubuntu base box
+cd E:\VM\vagrant\images
+vagrant init or vagrant init bento/ubuntu-16.04                    ->  it will create Vagrantfile under E:\VM
+
+\vagrant\images
+E:\VM\vagrant\images\>vagrant up        
+stop vagrant 
+rename from VM using option settings ->  General -> Name -> ubuntu64
+from command prompt, run vagrant ssh
+
+
+
+
+
+vi /etc/network/interfaces
+--------------------------------------------
+
+auto eth0
+iface eth0 inet dhcp
+pre-up sleep 2
+
+auto eth1
+iface eth1 inet static
+address 192.168.56.101
+netmask 255.255.255.0
+network 192.168.56.0
+broadcast 192.168.56.255
+-----------------------------------------------------------
+/etc/init.d/networking restart    # reboot network
+
+
+
+# Pre-requisite for Jenkins
+
+sudo apt install openjdk-8-jdk
+sudo apt-get install maven
+
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+
+
+
+-----------------------------------------------------
+HelloWorld Java program
+In case Jenkins home dir : /var/lib/jenkins
+create Project folder under "/var/lib/jenkins" in VM
+
+vi helloworld.java
+-----------
+public class helloworld{
+
+	public static void main(String[] args){
+		
+		System.out.println("Hello World ...");
+	}
+}
+------------
+
+first run this program from VM shell
+	javac helloworld.java
+	java helloworld
+------------
+
+In Jenkins, create job helloworld
+In execute shell
+
+	cd /var/lib/jenkins/project/
+	javac helloworld.java
+	java helloworld
+--------------------------------------------------------------------------------------------
+
+In Jenkins, create new job helloworldgit
+Under VM location,  /var/lib/jenkins/project/,   run 
+
+root@vagrant:/var/lib/jenkins/project#git init
+git add .
+git commit -m "....."
+
+Under github, create new repo "helloworld"
+Run commands
+
+git remote add origin https://github.com/puneetbhatia77/helloworld.git
+git push -u origin master
+
+And in source code management, select Git
+and Repositories, repository URL : https://github.com/puneetbhatia77/helloworld
+Build Triggers -> Poll SCM : * * * * *
+
+In execute shell
+
+	cd /var/lib/jenkins/project/
+	javac helloworld.java
+	java helloworld
+
+It will poll scm for change and tigger build.
+---------------------------------------------------------------------------------------------------------------------
